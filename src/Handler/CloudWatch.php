@@ -3,10 +3,14 @@
 namespace Maxbanton\Cwh\Handler;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Aws\CloudWatchLogs\Exception\CloudWatchLogsException;
+use DateTime;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
 use Monolog\Logger;
+use Monolog\LogRecord;
 
 class CloudWatch extends AbstractProcessingHandler
 {
@@ -32,79 +36,79 @@ class CloudWatch extends AbstractProcessingHandler
     /**
      * @var CloudWatchLogsClient
      */
-    private $client;
+    private CloudWatchLogsClient $client;
 
     /**
      * @var string
      */
-    private $group;
+    private string $group;
 
     /**
      * @var string
      */
-    private $stream;
+    private string $stream;
 
     /**
      * @var integer
      */
-    private $retention;
+    private int $retention;
 
     /**
      * @var bool
      */
-    private $initialized = false;
+    private bool $initialized = false;
 
     /**
      * @var string
      */
-    private $sequenceToken;
+    private string $sequenceToken;
 
     /**
      * @var int
      */
-    private $batchSize;
+    private int $batchSize;
 
     /**
      * @var array
      */
-    private $buffer = [];
+    private array $buffer = [];
 
     /**
      * @var array
      */
-    private $tags = [];
+    private array $tags = [];
 
     /**
      * @var bool
      */
-    private $createGroup;
+    private bool $createGroup;
 
     /**
      * Data amount limit (http://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html)
      *
      * @var int
      */
-    private $dataAmountLimit = 1048576;
+    private int $dataAmountLimit = 1048576;
 
     /**
      * @var int
      */
-    private $currentDataAmount = 0;
+    private int $currentDataAmount = 0;
 
     /**
      * @var int
      */
-    private $remainingRequests = self::RPS_LIMIT;
+    private int $remainingRequests = self::RPS_LIMIT;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    private $savedTime;
+    private DateTime $savedTime;
 
     /**
      * @var int|null
      */
-    private $earliestTimestamp = null;
+    private ?int $earliestTimestamp = null;
 
     /**
      * CloudWatchLogs constructor.
@@ -124,7 +128,7 @@ class CloudWatch extends AbstractProcessingHandler
      * @param int $retention
      * @param int $batchSize
      * @param array $tags
-     * @param int $level
+     * @param Level $level
      * @param bool $bubble
      * @param bool $createGroup
      *
@@ -132,14 +136,14 @@ class CloudWatch extends AbstractProcessingHandler
      */
     public function __construct(
         CloudWatchLogsClient $client,
-        $group,
-        $stream,
-        $retention = 14,
-        $batchSize = 10000,
+        string $group,
+        string $stream,
+        int $retention = 14,
+        int $batchSize = 10000,
         array $tags = [],
-        $level = Logger::DEBUG,
-        $bubble = true,
-        $createGroup = true
+        Level$level = Level::Debug,
+        bool $bubble = true,
+        bool $createGroup = true
     ) {
         if ($batchSize > 10000) {
             throw new \InvalidArgumentException('Batch size can not be greater than 10000');
@@ -155,13 +159,13 @@ class CloudWatch extends AbstractProcessingHandler
 
         parent::__construct($level, $bubble);
 
-        $this->savedTime = new \DateTime;
+        $this->savedTime = new DateTime;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function write(array $record): void
+    public function write(LogRecord $record): void
     {
         $records = $this->formatRecords($record);
 
@@ -204,7 +208,7 @@ class CloudWatch extends AbstractProcessingHandler
             // send items, retry once with a fresh sequence token
             try {
                 $this->send($this->buffer);
-            } catch (\Aws\CloudWatchLogs\Exception\CloudWatchLogsException $e) {
+            } catch (CloudWatchLogsException $e) {
                 $this->refreshSequenceToken();
                 $this->send($this->buffer);
             }
@@ -222,7 +226,7 @@ class CloudWatch extends AbstractProcessingHandler
 
     private function checkThrottle(): void
     {
-        $current = new \DateTime();
+        $current = new DateTime();
         $diff = $current->diff($this->savedTime)->s;
         $sameSecond = $diff === 0;
 
@@ -235,7 +239,7 @@ class CloudWatch extends AbstractProcessingHandler
             $this->remainingRequests = self::RPS_LIMIT;
         }
 
-        $this->savedTime = new \DateTime();
+        $this->savedTime = new DateTime();
     }
 
     /**
@@ -244,7 +248,7 @@ class CloudWatch extends AbstractProcessingHandler
      * @param array $record
      * @return int
      */
-    private function getMessageSize($record): int
+    private function getMessageSize(array $record): int
     {
         return strlen($record['message']) + 26;
     }
@@ -277,13 +281,13 @@ class CloudWatch extends AbstractProcessingHandler
      * Event size in the batch can not be bigger than 256 KB
      * https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch_limits_cwl.html
      *
-     * @param array $entry
+     * @param LogRecord $entry
      * @return array
      */
-    private function formatRecords(array $entry): array
+    private function formatRecords(LogRecord $entry): array
     {
-        $entries = str_split($entry['formatted'], self::EVENT_SIZE_LIMIT);
-        $timestamp = $entry['datetime']->format('U.u') * 1000;
+        $entries = str_split($entry->formatted, self::EVENT_SIZE_LIMIT);
+        $timestamp = $entry->datetime->format('U.u') * 1000;
         $records = [];
 
         foreach ($entries as $entry) {
@@ -309,7 +313,7 @@ class CloudWatch extends AbstractProcessingHandler
      *
      * @param array $entries
      *
-     * @throws \Aws\CloudWatchLogs\Exception\CloudWatchLogsException Thrown by putLogEvents for example in case of an
+     * @throws CloudWatchLogsException Thrown by putLogEvents for example in case of an
      *                                                               invalid sequence token
      */
     private function send(array $entries): void

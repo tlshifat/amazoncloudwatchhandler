@@ -21,8 +21,8 @@
         "source": "https://github.com/maxbanton/cwh"
     },
     "require": {
-        "php": "^7.2 || ^8",
-        "monolog/monolog": "^2.0",
+        "php": "^8.1",
+        "monolog/monolog": "^3.3.1",
         "aws/aws-sdk-php": "^3.18"
     },
     "require-dev": {
