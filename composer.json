@@ -1,6 +1,6 @@
 {
-    "name": "maxbanton/cwh",
-    "homepage": "https://github.com/maxbanton/cwh",
+    "name": "tlshifat/amazoncloudwatchhandler",
+    "homepage": "https://github.com/tlshifat/amazoncloudwatchhandler",
     "type": "library",
     "description": "AWS CloudWatch Handler for Monolog library",
     "keywords": [
@@ -11,14 +11,14 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Max Leonov",
-            "email": "hi@maxleonov.pw",
-            "homepage": "https://maxleonov.pw"
+            "name": "Md Shifatul Islam",
+            "email": "shifat.it@gmail.com",
+            "homepage": "https://www.linkedin.com/in/shifatit/"
         }
     ],
     "support": {
-        "issues": "https://github.com/maxbanton/cwh/issues",
-        "source": "https://github.com/maxbanton/cwh"
+        "issues": "https://github.com/tlshifat/amazoncloudwatchhandler/issues",
+        "source": "https://github.com/tlshifat/amazoncloudwatchhandler"
     },
     "require": {
         "php": "^8.1",
