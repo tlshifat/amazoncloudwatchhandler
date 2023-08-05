@@ -32,7 +32,7 @@ This library uses AWS API through AWS PHP SDK, which has limits on concurrent re
 Install the latest version with [Composer](https://getcomposer.org/) by running
 
 ```bash
-$ composer require maxbanton/cwh:^2.0
+$ composer require tlshifat/amazoncloudwatchhandler
 ```
 
 ## Basic Usage
