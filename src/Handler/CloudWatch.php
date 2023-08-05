@@ -1,6 +1,6 @@
 <?php
 
-namespace Maxbanton\Cwh\Handler;
+namespace Shifat\CloudWatchHandler\Handler;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Aws\CloudWatchLogs\Exception\CloudWatchLogsException;

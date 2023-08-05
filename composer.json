@@ -37,7 +37,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Maxbanton\\Cwh\\": "src"
+            "Shifat\\CloudWatchHandler\\": "src"
         }
     },
     "minimum-stability": "stable"

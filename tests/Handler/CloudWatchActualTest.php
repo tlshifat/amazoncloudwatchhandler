@@ -1,11 +1,10 @@
 <?php
 
-namespace tests\Handler;
+namespace Shifat\CloudWatchHandler\Handler;
 
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Exception;
-use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
@@ -22,8 +21,8 @@ class CloudWatchActualTest extends TestCase
             'region' => 'us-east-1',
             'version' => 'latest',
             'credentials' => [
-                'key' => 'AKIAA2FWD3TGDQDZ2IG72',
-                'secret' => 'V4mCA1T0IG6ovzI6AeAVeOmqPdOwf9BFfs8VO5hy1'
+                'key' => '',
+                'secret' => ''
             ]
         ];
 
