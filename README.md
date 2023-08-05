@@ -140,10 +140,10 @@ When setting the `$createGroup` argument to `false`, permissions `DescribeLogGro
 ```
 
 ## Issues
-Feel free to [report any issues](https://github.com/maxbanton/cwh/issues/new)
+Feel free to [report any issues](https://github.com/tlshifat/amazoncloudwatchhandler/issues/new)
 
 ## Contributing
-Please check [this document](https://github.com/maxbanton/cwh/blob/master/CONTRIBUTING.md)
+Please check [this document](https://github.com/tlshifat/amazoncloudwatchhandler/blob/master/CONTRIBUTING.md)
 
 ___
 
